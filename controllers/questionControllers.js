@@ -7,6 +7,8 @@ const Question = require('../model/questionModel');
 // Fetch Answer model
 const Answer = require('../model/answerModel');
 
+const User = require('../model/usermodel')
+
 // Post a question
 exports.post = async (req, res) => {
   const errors = validationResult(req);
@@ -182,6 +184,16 @@ exports.acceptAnswer = async (req, res) => {
 
 // Get all user's questions and answers
 exports.getQuestions = async (req, res) => {
+  let users = await User.find()
+    .then(items => {
+      if (items) {
+        return items
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error: 'Failed to get users ', errorObj: error })
+    })
+
   let answers = await Answer.find()
     .sort({ date: 1 })
     .then(items => {
@@ -199,7 +211,7 @@ exports.getQuestions = async (req, res) => {
     .then((questions) => {
       if (questions) {
         // console.log('SUCCESS');
-        return res.status(200).json({questions, answers});
+        return res.status(200).json({questions, answers, users});
       }
       return null;
     })
