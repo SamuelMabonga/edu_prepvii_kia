@@ -26,7 +26,7 @@ exports.post = async (req, res) => {
   newQuestion.save()
     .then(async () => {
       let questions = await Question.find()
-        .sort({ date: 'asc' })
+        .sort({ date: 1 })
         .then((questions) => {
           if (questions) {
             return questions
@@ -78,7 +78,7 @@ exports.postAnswer = async (req, res) => {
     )
     .then( async (question) => {
       let answers = await Answer.find()
-        .sort({ date: 'asc' })
+        .sort({ date: 1 })
         .then(items => {
           if (items) {
             return items
@@ -90,7 +90,7 @@ exports.postAnswer = async (req, res) => {
         })
 
       let questions = await Question.find()
-        .sort({ date: 'asc' })
+        .sort({ date: 1 })
         .then(items => {
           if (items) {
             return items
@@ -183,7 +183,7 @@ exports.acceptAnswer = async (req, res) => {
 // Get all user's questions and answers
 exports.getQuestions = async (req, res) => {
   let answers = await Answer.find()
-    .sort({ date: 'asc' })
+    .sort({ date: 1 })
     .then(items => {
       if (items) {
         return items
@@ -195,7 +195,7 @@ exports.getQuestions = async (req, res) => {
     })
     
   Question.find()
-    .sort({ date: 'asc' })
+    .sort({ date: 1 })
     .then((questions) => {
       if (questions) {
         // console.log('SUCCESS');
