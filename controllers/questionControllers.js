@@ -246,10 +246,10 @@ exports.upvote = async (req, res) => {
     {
       _id: question_id,
     },
-    { $push: { 'upvotes.0': req.user.id } },
+    { $push: { 'upvotes.0': { id: req.user.id } } },
     { new: true },
   )
-  .then( async () => {
+  .then( async (question) => {
     let questions = await Question.find()
       .sort({ date: 'desc' })
       .then(items => {
@@ -260,11 +260,48 @@ exports.upvote = async (req, res) => {
       .catch(error =>  {
         res.status(500).json({ error: 'Failed to get questions.'})
       })
-    res.status(200).json({ questions })
+    res.status(200).json({ question, questions })
   })
-  .catch((err) => 
+  .catch((err) => {
+    console.log(err)
     res.status(500).json({ failedToUpdate: 'Failed to save the answer!', error: err })
-  );
+  });
+
+  return null;
+}
+
+// downvote a question
+exports.downvote = async (req, res) => {
+  const { question_id } = req.params
+
+  console.log('downvoting')
+
+  Question.findOneAndUpdate(
+    {
+      _id: question_id,
+    },
+    { $pull: { 'upvotes': { id: req.user.id } } },
+    { new: true },
+  )
+  .then( async (question) => {
+    let questions = await Question.find()
+      .sort({ date: 'desc' })
+      .then(items => {
+        if (items) {
+          return items
+        }
+      })
+      .catch(error =>  {
+        res.status(500).json({ error: 'Failed to get questions.'})
+      })
+    console.log(question)
+    // console.log(questions)
+    res.status(200).json({ question, questions })
+  })
+  .catch((err) => {
+    console.log(err)
+    res.status(500).json({ failedToUpdate: 'Failed to update the question!', error: err })
+  });
 
   return null;
 }

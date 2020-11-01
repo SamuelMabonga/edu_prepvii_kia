@@ -20,7 +20,7 @@ const QuestionSchema = new Schema({
   },
   upvotes: [
     {
-      user: {
+      id: {
         type: Schema.Types.ObjectId,
         ref: 'myUser',
       },
