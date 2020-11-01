@@ -66,4 +66,10 @@ router.get('/:question_id', controllers.getQuestion);
 // @access - PUBLIC
 router.get('/', controllers.getQuestions);
 
+// @type - POST
+// @route - /questions/:question_id
+// @desc - upvote a question
+// @access - PRIVATE
+router.get('/:question_id', passport.authenticate('jwt', { session: false }), controllers.upvote)
+
 module.exports = router;

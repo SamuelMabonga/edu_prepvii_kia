@@ -237,3 +237,34 @@ exports.getQuestion = async (req, res) => {
 
   return null;
 };
+
+// upvote a question
+exports.upvote = async (req, res) => {
+  const { question_id } = req.params
+
+  Question.findOneAndUpdate(
+    {
+      _id: question_id,
+    },
+    { $push: { 'upvotes.0': req.user.id } },
+    { new: true },
+  )
+  .then( async () => {
+    let questions = await Question.find()
+      .sort({ date: 'desc' })
+      .then(items => {
+        if (items) {
+          return items
+        }
+      })
+      .catch(error =>  {
+        res.status(500).json({ error: 'Failed to get questions.'})
+      })
+    res.status(200).json({ questions })
+  })
+  .catch((err) => 
+    res.status(500).json({ failedToUpdate: 'Failed to save the answer!', error: err })
+  );
+
+  return null;
+}
