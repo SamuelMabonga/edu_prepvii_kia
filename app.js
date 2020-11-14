@@ -23,6 +23,8 @@ const DB = process.env.MONGO_URL;
 const signuproute = require('./routes/signUproute');
 // import questions route
 const questionsRoute = require('./routes/questions');
+// import management routes
+const managementRoute = require('./routes/management')
 
 // create an express app
 const app = express();
@@ -72,6 +74,8 @@ require('./strategies/jwtwebtoken')(passport);
 app.use('/api', signuproute);
 // use questions routes
 app.use('/api/questions', cors(), questionsRoute);
+// use management routes
+app.use('/api/management', cors(), managementRoute)
 
 // check port
 app.listen(port, () => {

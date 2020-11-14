@@ -1,12 +1,16 @@
 // Import express-validator
 const { validationResult } = require('express-validator');
 
-// Import User model
-
 // Import modules
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../model/usermodel');
+const Roles = require('../model/rolesModel')
+const Farmers = require('../model/farmerModel')
+const Farms = require('../model/farmModel')
+const Facilities = require('../model/facilityModel');
+const Activities = require('../model/activityModel')
+const Tasks = require('../model/taskModel') 
 
 // Import JWT secret key
 const key = process.env.JWT_SECRET;
@@ -22,9 +26,17 @@ exports.signup = async (req, res) => {
 
   const user = new User({
     username: req.body.username,
+    firstname: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
     password: req.body.password,
+    gender: req.body.gender,
     location: req.body.location,
+    age: req.body.age,
+    village: req.body.village,
+    interests: req.body.interests,
+    location: req.body.interests
   });
   try {
     await bcrypt.genSalt(8, (err, salt) => {
@@ -71,11 +83,10 @@ exports.login = async (req, res) => {
   const { password } = req.body;
   User.findOne({ email })
     .then((user) => {
+      console.log(user)
       if (!user) {
         return res.status(400).json({ emailError: 'You are not registered! Please register!' });
       }
-
-      const name = user.username
 
       // unhashing password and check bcrypt
       bcrypt.compare(password, user.password)
@@ -85,7 +96,7 @@ exports.login = async (req, res) => {
             // use payload and create token for user
             const payload = {
               id: user.id,
-              name: user.name,
+              name: user.username,
               email: user.email,
             };
             jwt.sign(
@@ -99,7 +110,8 @@ exports.login = async (req, res) => {
                   return res.status(400).json({error: err});
                 }
                 return res.status(200).json({
-                  username: name,
+                  username: user.username,
+                  fullName: `${user.firstName} ${user.lastName}`,
                   userToken: token,
                 });
               },
@@ -123,3 +135,5 @@ exports.login = async (req, res) => {
 
   return null;
 };
+
+
